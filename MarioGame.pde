@@ -1,3 +1,5 @@
+Camera camera = new Camera();
+
 Player mario;
 ArrayList<ArrayList<Block>> blocks = new ArrayList();
 
@@ -16,10 +18,10 @@ void setup() {
   for (int i = 0; i < Math.pow(2, 8); i++) {
     blocks.add(new ArrayList<Block>());
   }
-  blocks.get(13).add(new Block(new PVector(0, 13 * 16)));
   for (int column = 0; column < 50; column++) {
     int row = 14;
     blocks.get(row).add(new Block(new PVector(column * Constants.BLOCK_SIZE.x, row * Constants.BLOCK_SIZE.y)));
+    blocks.get(row + 1).add(new Block(new PVector(column * Constants.BLOCK_SIZE.x, (row + 1) * Constants.BLOCK_SIZE.y)));
   }
 }
 
@@ -32,11 +34,7 @@ void draw() {
   
   background(92, 148, 253);
   
-  for (Entity entity : Entity.getEntities()) {
-    pushMatrix();
-    entity.show();
-    popMatrix();
-  }
+  camera.draw();
 }
 
 

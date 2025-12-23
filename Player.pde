@@ -2,7 +2,7 @@ class Player extends Entity {
   public Player() {
     super();
     this.size = new PVector(12, 16);
-    this.position = new PVector(0, 0);
+    this.position = new PVector(Constants.BLOCK_SIZE.x, 0);
     this.canCollide = true;
   }
   
