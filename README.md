@@ -1,0 +1,1 @@
+mario competition manifesting candidate
