@@ -1,43 +1,57 @@
 static class Input {
-  private static final ArrayList<Constants.InputAction> inputsActive = new ArrayList();
-  private static final ArrayList<Constants.InputAction> inputsBegan = new ArrayList();
-  private static final ArrayList<Constants.InputAction> inputsEnded = new ArrayList();
+  private static final ArrayList<Character> keysActive = new ArrayList();
+  private static final ArrayList<Character> keysBegan = new ArrayList();
+  private static final ArrayList<Character> keysEnded = new ArrayList();
 
   private Input () { }
 
   public static void refresh() {
-    inputsBegan.clear();
-    inputsEnded.clear();
+    keysBegan.clear();
+    keysEnded.clear();
   }
 
-  public static boolean isInputActive(Constants.InputAction inputAction) {
-    return inputsActive.indexOf(inputAction) != -1;
+  public static int getX() {
+    int x = 0;
+    if (isKeyActive('d')) x++;
+    if (isKeyActive('a')) x--;
+    return x;
+  }
+
+  public static int getY() {
+    int y = 0;
+    if (isKeyActive('s')) y++;
+    if (isKeyActive('w')) y--;
+    return y;
+  }
+
+  public static PVector getDirection() {
+    return new PVector(getX(), getY());
+  }
+
+  public static boolean isKeyActive(Character key) {
+    return keysActive.indexOf(key) != -1;
   }
   
-  public static void beginInput(Constants.InputAction inputAction) {
-    if (isInputActive(inputAction)) return;
-    inputsBegan.add(inputAction);
-    inputsActive.add(inputAction);
+  public static void beginKey(Character key) {
+    if (isKeyActive(key)) return;
+    keysBegan.add(key);
+    keysActive.add(key);
   }
    
     
-  public static void endInput(Constants.InputAction inputAction) {
-    if (!isInputActive(inputAction)) return;
-    inputsEnded.add(inputAction);
-    inputsActive.remove(inputAction);
+  public static void endKey(Character key) {
+    if (!isKeyActive(key)) return;
+    keysEnded.add(key);
+    keysActive.remove(key);
   }
 }
 
 void keyPressed() {
-  Constants.InputAction inputAction = Constants.INPUT_MAP.get(key);
-  if (inputAction == null) return;
-  Input.beginInput(inputAction);
+  Input.beginKey(key);
 }
 
 void keyReleased() {
-  Constants.InputAction inputAction = Constants.INPUT_MAP.get(key);
-  if (inputAction == null) return;
-  Input.endInput(inputAction);
+  Input.endKey(key);
 }
 
 

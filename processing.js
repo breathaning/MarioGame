@@ -8525,6 +8525,9 @@
           }
           curSketch.attach(processing, defaultScope);
           curSketch.onLoad(processing);
+          if(processing.settings) {
+            processing.settings();
+          }
           if (processing.setup) {
             processing.setup();
             processing.resetMatrix();

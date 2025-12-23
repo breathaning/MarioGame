@@ -1,23 +1,22 @@
 class Block extends Entity {
-  
-  public Block(float positionX, float positionY) {
+  public Block(PVector position) {
     super();
-    this.positionX = positionX;
-    this.positionY = positionY;
-    this.sizeX = Constants.BLOCK_SIZE_X;
-    this.sizeY = Constants.BLOCK_SIZE_Y;
+    this.position = position;
+    this.size = Constants.BLOCK_SIZE;
     this.canCollide = true;
   }
   
   public void show() {
     noStroke();
     fill(255, 255, 0);
-    rect(positionX, positionY, sizeX, sizeY);
+    new Draw().rect(position.x, position.y, size.x, size.y);
   }
   
   public void gridToPosition(int column, int row) {
-    positionX = column * Constants.BLOCK_SIZE_X;
-    positionY = row * Constants.BLOCK_SIZE_Y;
+    position = new PVector(
+      column * Constants.BLOCK_SIZE.x,
+      row * Constants.BLOCK_SIZE.y
+    );
   }
 }
 
