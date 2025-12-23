@@ -36,6 +36,11 @@ public class Draw {
     new Text().draw(string, x, y);
     return this;
   }
+
+  public Draw image(PImage img, float x, float y, float w, float h) {
+    new Image().draw(img, x, y, w, h);
+    return this;
+  }
 }
 
 float scaleX(float x) {
@@ -73,5 +78,11 @@ private class Ellipse {
 private class Text {
   public void draw(String string, float x, float y) {
     text(string, scaleX(x), scaleY(y));
+  }
+}
+
+private class Image {
+  public void draw(PImage img, float x, float y, float w, float h) {
+    image(img, scaleX(x), scaleY(y), scaleX(w), scaleY(h));
   }
 }

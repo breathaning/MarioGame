@@ -24,6 +24,14 @@ static class Input {
     return y;
   }
 
+  public static boolean getRunning() {
+    return isKeyActive('x');
+  }
+
+  public static boolean getJumping() {
+    return isKeyActive('z');
+  }
+
   public static PVector getDirection() {
     return new PVector(getX(), getY());
   }
@@ -46,12 +54,21 @@ static class Input {
   }
 }
 
+Character convertKey(Character key, int keyCode) {
+  if (key != CODED) return key;
+  if (keyCode == UP) return 'w';
+  if (keyCode == LEFT) return 'a';
+  if (keyCode == DOWN) return 's';
+  if (keyCode == RIGHT) return 'd';
+  return '.';
+}
+
 void keyPressed() {
-  Input.beginKey(key);
+  Input.beginKey(convertKey(key, keyCode));
 }
 
 void keyReleased() {
-  Input.endKey(key);
+  Input.endKey(convertKey(key, keyCode));
 }
 
 

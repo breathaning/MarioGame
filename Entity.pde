@@ -30,11 +30,40 @@ static class Entity {
     Entity.entities.remove(this);
   }
 
+  public boolean isHittingWall(int direction) {
+    if (direction == 0) return false;
+    ArrayList<Entity> bounding = getBounding();
+    for (Entity other : bounding) {
+      if ((this.position.x - other.position.x) * direction > 0 || getAbsoluteYSeperation(other) >= 0) continue;
+      return true;
+    }
+    return false;
+  }
+
   public boolean isGrounded() {
-    this.position.y += 1;
-    boolean grounded = (getFirstTouching() != null);
-    this.position.y -= 1;
-    return grounded;
+    ArrayList<Entity> bounding = getBounding();
+    for (Entity other : bounding) {
+      if (getYSeperation(other) > 0) continue;
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isBounding(Entity other) {
+    if (!other.canCollide) return false;
+    float distX = this.position.x - other.position.x;
+    float distY = this.position.y - other.position.y;
+    return Math.abs(distX) <= (this.size.x + other.size.y) / 2 && Math.abs(distY) <= (this.size.y + other.size.y) / 2;
+  }
+
+  public ArrayList<Entity> getBounding() {
+    ArrayList<Entity> bounding = new ArrayList();
+    for (Entity other : Entity.entities) {
+      if (other == this) continue;
+      if (!isBounding(other)) continue;
+      bounding.add(other);
+    }
+    return bounding;
   }
 
   public boolean isTouching(Entity other) {
@@ -76,15 +105,15 @@ static class Entity {
         if (xTouching.size() > 0) {
           xTouched = true;
           Entity closest = xTouching.get(0);
-          float closestSeperation = getXSeperation(closest);
+          float closestSeperation = Math.abs(getXSeperation(closest));
           for (int j = 0; j < xTouching.size(); j++) {
             Entity other = xTouching.get(j);
-            float separation = getXSeperation(other);
+            float separation = Math.abs(getXSeperation(other));
             if (separation > closestSeperation) continue;
             closest = other;
             closestSeperation = separation;
           }
-          position.x = closest.position.x - ((closest.size.x + this.size.x) / 2 * sign(offset.x));
+          position.x = closest.position.x - (Util.sign(offset.x) * (closest.size.x + this.size.x) / 2);
         }
       }
 
@@ -94,18 +123,18 @@ static class Entity {
         if (yTouching.size() > 0) {
           yTouched = true;
           Entity closest = yTouching.get(0);
-          float closestSeperation = getYSeperation(closest);
+          float closestSeperation = Math.abs(getYSeperation(closest));
           for (int j = 0; j < yTouching.size(); j++) {
             Entity other = yTouching.get(j);
-            float separation = getYSeperation(other);
+            float separation = Math.abs(getYSeperation(other));
             if (separation > closestSeperation) continue;
             closest = other;
             closestSeperation = separation;
           }
-          position.y = closest.position.y - ((closest.size.y + this.size.y) / 2 * sign(offset.y));
+          position.y = closest.position.y - (Util.sign(offset.y) * (closest.size.y + this.size.y) / 2);
         }
       }
-      
+
       if (xTouched && yTouched) break;
     }
   }
@@ -122,17 +151,21 @@ static class Entity {
     return size;
   }
 
-  private int sign(float x) {
-    if (x == 0) return 0;
-    else if (x > 0) return 1;
-    return -1;
+  public float getXSeperation(Entity other) {
+    float offset = this.position.x - other.position.x;
+    return offset - Util.sign(offset) * ((other.size.x + this.size.x) / 2);
   }
 
-  private float getXSeperation(Entity other) {
+  public float getYSeperation(Entity other) {
+    float offset = this.position.y - other.position.y;
+    return offset - Util.sign(offset) * ((other.size.y + this.size.y) / 2);
+  }
+
+  public float getAbsoluteXSeperation(Entity other) {
     return Math.abs(this.position.x - other.position.x) - ((other.size.x + this.size.x) / 2);
   }
 
-  private float getYSeperation(Entity other) {
+  public float getAbsoluteYSeperation(Entity other) {
     return Math.abs(this.position.y - other.position.y) - ((other.size.y + this.size.y) / 2);
   }
 }

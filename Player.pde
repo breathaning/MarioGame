@@ -11,12 +11,30 @@ class Player extends Entity {
 
     int directionX = Input.getX();
     if (directionX != 0) {
-      if (sign(directionX) == sign(velocity.x)) {
-        velocity.x += sign(directionX) * Constants.Player.GROUND_WALK_ACCELERATION;
+      float maxSpeed, acceleration, skid;
+      if (Input.getRunning()) {
+        maxSpeed = Constants.Player.RUN_MAX_SPEED;
+        acceleration = Constants.Player.RUN_ACCELERATION;
+        skid = Constants.Player.RUN_SKID;
       } else {
-        velocity.x += sign(directionX) * Constants.Player.WALK_SKID;
+        maxSpeed = Constants.Player.WALK_MAX_SPEED;
+        acceleration = Constants.Player.WALK_ACCELERATION;
+        skid = Constants.Player.WALK_SKID;
       }
-      velocity.x = Math.min(Constants.Player.WALK_MAX_SPEED, Math.max(-Constants.Player.WALK_MAX_SPEED, velocity.x));
+      if (!isGrounded()) {
+        acceleration = Constants.Player.AIR_ACCELERATION;
+        skid = Constants.Player.AIR_SKID;
+      }
+      if (sign(directionX) == sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_THRESHOLD) {
+        velocity.x += sign(directionX) * acceleration;
+      } else {
+        velocity.x += sign(directionX) * skid;
+      }
+      velocity.x = Math.min(maxSpeed, Math.max(-maxSpeed, velocity.x));
+
+      if (isHittingWall(sign(velocity.x))) {
+        velocity.x = 0;
+      }
     } else {
       if (Constants.Player.DECELERATION >= Math.abs(velocity.x)) {
         velocity.x = 0;
@@ -25,14 +43,18 @@ class Player extends Entity {
       }
     }
 
-    int directionY = Input.getY();
-    if (directionY < 0 && isGrounded()) {
-      velocity.y = -(Constants.Player.JUMP_VELOCITY + Constants.Player.JUMP_X_INFLUENCE * (int)(Math.abs(velocity.x) / 25));
+    if (isGrounded()) {
+      if (Input.getJumping()) {
+        velocity.y = -(Constants.Player.JUMP_VELOCITY + Constants.Player.JUMP_X_INFLUENCE * (int)(Math.abs(velocity.x) / 25));
+      } else {
+        velocity.y = 0;
+      }
     }
     
     if (velocity.y > 280) {
       velocity.y = 280;
     }
+
     super.update();
   }
   
