@@ -25,7 +25,7 @@ class Mario extends Entity {
   
   private void step(float stepX, float stepY) {
     int segmentX = (int)Math.ceil(stepX / sizeX + 1);
-    for (int i = 0; i < segmentX; i++ {
+    for (int i = 0; i < segmentX; i++) {
       positionX += stepX / segmentX;
       if (getTouching().size() > 0) {
         Entity touched = getTouching().get(0);
