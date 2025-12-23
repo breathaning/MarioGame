@@ -20,7 +20,7 @@ static class Entity {
   }
 
   public void update() {
-    step(PVector.div(velocity, Constants.SIMULATION_RATE));
+    move(PVector.div(velocity, Constants.SIMULATION_RATE));
   }
 
   public void show() {
@@ -63,17 +63,18 @@ static class Entity {
     return null;
   }
 
-  public void step(PVector offset) {
+  public void move(PVector offset) {
     int steps = (int)Math.ceil(2 * offset.mag() / size.mag());
     if (steps == 0) return;
     for (int i = 0; i < steps; i++) {
-      boolean touched = false;
+      boolean xTouched = false;
+      boolean yTouched = false;
 
       if (offset.x != 0) {
         position.x += offset.x / steps;
         ArrayList<Entity> xTouching = getTouching();
         if (xTouching.size() > 0) {
-          touched = true;
+          xTouched = true;
           Entity closest = xTouching.get(0);
           float closestSeperation = getXSeperation(closest);
           for (int j = 0; j < xTouching.size(); j++) {
@@ -91,7 +92,7 @@ static class Entity {
         position.y += offset.y / steps;
         ArrayList<Entity> yTouching = getTouching();
         if (yTouching.size() > 0) {
-          touched = true;
+          yTouched = true;
           Entity closest = yTouching.get(0);
           float closestSeperation = getYSeperation(closest);
           for (int j = 0; j < yTouching.size(); j++) {
@@ -104,8 +105,8 @@ static class Entity {
           position.y = closest.position.y - ((closest.size.y + this.size.y) / 2 * sign(offset.y));
         }
       }
-
-      if (touched) break;
+      
+      if (xTouched && yTouched) break;
     }
   }
 
