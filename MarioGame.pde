@@ -1,22 +1,21 @@
-Mario mario;
+Player mario;
 ArrayList<ArrayList<Block>> blocks = new ArrayList();
 
 void settings() {
-  PVector displayResolution = Screen.getDisplayResolution();
-  size((int)displayResolution.x, (int)displayResolution.y);
-
+  size((int)Constants.DISPLAY_RESOLUTION.x, (int)Constants.DISPLAY_RESOLUTION.y);
 }
 
 void setup() {
+  frameRate(Constants.SIMULATION_RATE);
   rectMode(CENTER);
 
-  mario = new Mario();
+  mario = new Player();
   for (int i = 0; i < Math.pow(2, 8); i++) {
     blocks.add(new ArrayList<Block>());
   }
-  blocks.get(19).add(new Block(new PVector(0, 19 * 25)));
+  blocks.get(13).add(new Block(new PVector(0, 19 * 25)));
   for (int column = 0; column < 50; column++) {
-    int row = 20;
+    int row = 14;
     blocks.get(row).add(new Block(new PVector(column * Constants.BLOCK_SIZE.x, row * Constants.BLOCK_SIZE.y)));
   }
 }
@@ -36,8 +35,6 @@ void draw() {
     entity.show();
     popMatrix();
   }
-
-  // new Draw().rect(1, 1, 1, 1);
 }
 
 

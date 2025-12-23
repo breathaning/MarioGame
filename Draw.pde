@@ -38,32 +38,40 @@ public class Draw {
   }
 }
 
+float scaleX(float x) {
+  return x * Constants.DISPLAY_RESOLUTION.x / Constants.NATIVE_RESOLUTION.x;
+}
+
+float scaleY(float y) {
+  return y * Constants.DISPLAY_RESOLUTION.y / Constants.NATIVE_RESOLUTION.y;
+}
+
 private class Rectangle {
   public void draw(float x, float y, float w, float h) {
-    rect(x, y, w, h);
+    rect(scaleX(x), scaleY(y), scaleX(w), scaleY(h));
   }
 }
 
 private class Line {
   public void draw(float x1, float y1, float x2, float y2) {
-    line(x1, y1, x2, y2);
+    line(scaleX(x1), scaleY(y1), scaleX(x2), scaleY(y2));
   }
 }
 
 private class Point {
   public void draw(float x, float y) {
-    point(x, y);
+    point(scaleX(x), scaleY(y));
   }
 }
 
 private class Ellipse {
   public void draw(float x, float y, float r1, float r2) {
-    ellipse(x, y, r1, r2);
+    ellipse(scaleX(x), y, scaleX(r1), scaleY(r2));
   }
 }
 
 private class Text {
   public void draw(String string, float x, float y) {
-    text(string, x, y);
+    text(string, scaleX(x), scaleY(y));
   }
 }

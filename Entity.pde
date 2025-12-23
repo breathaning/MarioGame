@@ -20,6 +20,7 @@ static class Entity {
   }
 
   public void update() {
+    step(PVector.div(velocity, Constants.SIMULATION_RATE));
   }
 
   public void show() {
@@ -27,6 +28,13 @@ static class Entity {
 
   public void destroy() {
     Entity.entities.remove(this);
+  }
+
+  public boolean isGrounded() {
+    this.position.y += 1;
+    boolean grounded = (getFirstTouching() != null);
+    this.position.y -= 1;
+    return grounded;
   }
 
   public boolean isTouching(Entity other) {
@@ -46,8 +54,17 @@ static class Entity {
     return touching;
   }
 
+  public Entity getFirstTouching() {
+    for (Entity other : Entity.entities) {
+      if (other == this) continue;
+      if (!isTouching(other)) continue;
+      return other;
+    }
+    return null;
+  }
+
   public void step(PVector offset) {
-    int steps = (int)Math.ceil(offset.mag() / size.mag());
+    int steps = (int)Math.ceil(2 * offset.mag() / size.mag());
     if (steps == 0) return;
     for (int i = 0; i < steps; i++) {
       boolean touched = false;
