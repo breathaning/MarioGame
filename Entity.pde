@@ -46,7 +46,7 @@ static class Entity {
   public boolean isGrounded() {
     ArrayList<Entity> bounding = getBounding();
     for (Entity other : bounding) {
-      if (getYSeperation(other) > 0) continue;
+      if (getAbsoluteXSeperation(other) == 0 || getYSeperation(other) > 0) continue;
       return true;
     }
     return false;
@@ -105,7 +105,6 @@ static class Entity {
       if (offset.x != 0) {
         position.x += offset.x / steps;
         if (keepOnScreen) {  
-          println(Scene.getPosition().x + size.x / 2);
           if (position.x < Scene.getPosition().x + size.x / 2) {
             position.x = Scene.getPosition().x + size.x / 2;
           }

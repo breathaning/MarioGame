@@ -21,6 +21,10 @@ void setup() {
     blocks.get(row).add(new Block(new PVector(column * Constants.BLOCK_SIZE.x, row * Constants.BLOCK_SIZE.y)));
     blocks.get(row + 1).add(new Block(new PVector(column * Constants.BLOCK_SIZE.x, (row + 1) * Constants.BLOCK_SIZE.y)));
   }
+  blocks.get(13).add(new Block(new PVector(30 * Constants.BLOCK_SIZE.x, 13 * Constants.BLOCK_SIZE.y)));
+  blocks.get(12).add(new Block(new PVector(30 * Constants.BLOCK_SIZE.x, 12 * Constants.BLOCK_SIZE.y)));
+  blocks.get(11).add(new Block(new PVector(30 * Constants.BLOCK_SIZE.x, 11 * Constants.BLOCK_SIZE.y)));
+  blocks.get(10).add(new Block(new PVector(30 * Constants.BLOCK_SIZE.x, 10 * Constants.BLOCK_SIZE.y)));
 }
 
 void draw() {
