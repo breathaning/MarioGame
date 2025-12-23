@@ -4,6 +4,7 @@ class Player extends Entity {
     this.size = new PVector(12, 16);
     this.position = new PVector(Constants.BLOCK_SIZE.x, 0);
     this.canCollide = true;
+    this.keepOnScreen = true;
   }
   
   public void update() {
@@ -51,8 +52,8 @@ class Player extends Entity {
       }
     }
     
-    if (velocity.y > 280) {
-      velocity.y = 280;
+    if (velocity.y > Constants.Player.MAX_FALL_SPEED) {
+      velocity.y = Constants.Player.MAX_FALL_SPEED;
     }
 
     super.update();

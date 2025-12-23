@@ -2,7 +2,7 @@ static class Constants {
   public static final int SIMULATION_RATE = 60;
 
   public static final PVector NATIVE_RESOLUTION = new PVector(256, 240);
-  public static final PVector DISPLAY_RESOLUTION = new PVector(768, 720);
+  public static final PVector DISPLAY_RESOLUTION = new PVector(720, 480);
   
   public static final PVector BLOCK_SIZE = new PVector(16, 16);
 
@@ -25,6 +25,8 @@ static class Constants {
 
     public static final float JUMP_VELOCITY = 300;
     public static final float JUMP_X_INFLUENCE = 8;
+
+    public static final float MAX_FALL_SPEED = 280;
   }
 }
 

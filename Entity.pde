@@ -9,13 +9,16 @@ static class Entity {
   protected PVector position;
   protected PVector velocity;
   protected PVector size;
-  protected boolean canCollide = false;
+  protected boolean canCollide;
+  protected boolean keepOnScreen; 
 
   public Entity() {
     this.name = "";
     this.position = new PVector(0, 0);
     this.velocity = new PVector(0, 0);
     this.size = new PVector(0, 0);
+    this.canCollide = false;
+    this.keepOnScreen = false;
     Entity.entities.add(this);
   }
 
@@ -101,6 +104,12 @@ static class Entity {
 
       if (offset.x != 0) {
         position.x += offset.x / steps;
+        if (keepOnScreen) {  
+          println(Scene.getPosition().x + size.x / 2);
+          if (position.x < Scene.getPosition().x + size.x / 2) {
+            position.x = Scene.getPosition().x + size.x / 2;
+          }
+        }
         ArrayList<Entity> xTouching = getTouching();
         if (xTouching.size() > 0) {
           xTouched = true;
