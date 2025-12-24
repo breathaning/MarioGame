@@ -58,10 +58,11 @@ class Player extends Entity {
     }
 
     if (jumping == true) {
-      if (!grounded && Time.frame - lastJump <= Constants.Player.JUMP_MAX_DURATION) {
+      if (!grounded && Time.frame - lastJump <= Constants.Player.JUMP_CANCEL_WINDOW) {
         if (Input.getJumping()) {
           jumping = true;
         } else {
+          // jump cancelled
           jumping = false;
           velocity.y *= Constants.Player.JUMP_CANCEL_SCALAR;
         }

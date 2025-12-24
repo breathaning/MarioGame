@@ -30,7 +30,7 @@ static class Constants {
 
     public static final float MAX_FALL_SPEED = 280;
 
-    public static final float JUMP_MAX_DURATION = 5;
+    public static final float JUMP_CANCEL_WINDOW = 10;
   }
 }
 
