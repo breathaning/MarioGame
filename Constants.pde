@@ -8,7 +8,7 @@ static class Constants {
 
   public static class Player {
     public static final float GRAVITY = 25;
-    public static final float JUMP_GRAVITY = 11;
+    public static final float JUMP_GRAVITY = 12;
 
     public static final float WALK_MAX_SPEED = 100;
     public static final float WALK_ACCELERATION = 4;
@@ -26,10 +26,11 @@ static class Constants {
 
     public static final float JUMP_VELOCITY = 300;
     public static final float JUMP_X_INFLUENCE = 8;
+    public static final float JUMP_CANCEL_SCALAR = 0.3;
 
     public static final float MAX_FALL_SPEED = 280;
 
-    public static final float JUMP_MAX_DURATION = 7;
+    public static final float JUMP_MAX_DURATION = 5;
   }
 }
 

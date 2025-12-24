@@ -36,13 +36,12 @@ void draw() {
 
   Input.refresh();
 
-  background(92, 148, 253);
-
   if (mario.position.x - Scene.getPosition().x > Scene.getSize().x / 2) {
-    Scene.panHorizontal(mario.position.x - Scene.getPosition().x - Scene.getSize().x / 2);
+    Scene.setX(mario.position.x - Scene.getSize().x / 2);
   }
   pushMatrix();
   translate(Util.displayX(-Scene.position.x), Util.displayY(-Scene.position.y));
+  background(92, 148, 253);
   for (Entity entity : Entity.getEntities()) {
     pushMatrix();
     entity.show();

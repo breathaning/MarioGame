@@ -18,7 +18,7 @@ class Player extends Entity {
 
     if (jumping) {
       gravity = Constants.Player.JUMP_GRAVITY;
-    } else {
+    } else if (!jumping && velocity.y > 0) {
       gravity = Constants.Player.GRAVITY;
     }
     velocity.y += gravity;
@@ -58,8 +58,13 @@ class Player extends Entity {
     }
 
     if (jumping == true) {
-      if (!grounded && Input.getJumping() && Time.frame - lastJump <= Constants.Player.JUMP_MAX_DURATION) {
-        jump();
+      if (!grounded && Time.frame - lastJump <= Constants.Player.JUMP_MAX_DURATION) {
+        if (Input.getJumping()) {
+          jumping = true;
+        } else {
+          jumping = false;
+          velocity.y *= Constants.Player.JUMP_CANCEL_SCALAR;
+        }
       } else {
         jumping = false;
       }
