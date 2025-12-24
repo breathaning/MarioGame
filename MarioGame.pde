@@ -28,6 +28,8 @@ void setup() {
 }
 
 void draw() {
+  updateTime();
+
   for (Entity entity : Entity.getEntities()) {
     entity.update();
   }
@@ -36,8 +38,8 @@ void draw() {
 
   background(92, 148, 253);
 
-  if (mario.position.x - Scene.getPosition().x > Constants.NATIVE_RESOLUTION.x / 2) {
-    Scene.panHorizontal(mario.position.x - Scene.getPosition().x - Constants.NATIVE_RESOLUTION.x / 2);
+  if (mario.position.x - Scene.getPosition().x > Scene.getSize().x / 2) {
+    Scene.panHorizontal(mario.position.x - Scene.getPosition().x - Scene.getSize().x / 2);
   }
   pushMatrix();
   translate(Util.displayX(-Scene.position.x), Util.displayY(-Scene.position.y));
@@ -49,4 +51,7 @@ void draw() {
   popMatrix();
 }
 
-
+void updateTime() {
+  Time.seconds = millis() / 1000.0;
+  Time.frame = Time.seconds * Constants.SIMULATION_RATE;
+}

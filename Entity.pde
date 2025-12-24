@@ -10,7 +10,7 @@ static class Entity {
   protected PVector velocity;
   protected PVector size;
   protected boolean canCollide;
-  protected boolean keepOnScreen; 
+  protected boolean keepOnScreen;
 
   public Entity() {
     this.name = "";
@@ -107,6 +107,9 @@ static class Entity {
         if (keepOnScreen) {  
           if (position.x < Scene.getPosition().x + size.x / 2) {
             position.x = Scene.getPosition().x + size.x / 2;
+          }
+          if (position.x > Scene.getPosition().x + Scene.getSize().x - size.x / 2) {
+            position.x = Scene.getPosition().x + Scene.getSize().x - size.x / 2;
           }
         }
         ArrayList<Entity> xTouching = getTouching();

@@ -1,14 +1,27 @@
 class Player extends Entity {
+  boolean jumping;
+  float lastJump;
+  float gravity;
+
   public Player() {
     super();
     this.size = new PVector(12, 16);
     this.position = new PVector(Constants.BLOCK_SIZE.x, 0);
     this.canCollide = true;
     this.keepOnScreen = true;
+    this.jumping = false;
+    this.gravity = Constants.Player.GRAVITY;
   }
   
   public void update() {
-    velocity.y += Constants.Player.GRAVITY;
+    boolean grounded = isGrounded();
+
+    if (jumping) {
+      gravity = Constants.Player.JUMP_GRAVITY;
+    } else {
+      gravity = Constants.Player.GRAVITY;
+    }
+    velocity.y += gravity;
 
     int directionX = Input.getX();
     if (directionX != 0) {
@@ -22,31 +35,41 @@ class Player extends Entity {
         acceleration = Constants.Player.WALK_ACCELERATION;
         skid = Constants.Player.WALK_SKID;
       }
-      if (!isGrounded()) {
+      if (!grounded) {
         acceleration = Constants.Player.AIR_ACCELERATION;
         skid = Constants.Player.AIR_SKID;
       }
-      if (sign(directionX) == sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_THRESHOLD) {
-        velocity.x += sign(directionX) * acceleration;
+      if (Util.sign(directionX) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_THRESHOLD) {
+        velocity.x += Util.sign(directionX) * acceleration;
       } else {
-        velocity.x += sign(directionX) * skid;
+        velocity.x += Util.sign(directionX) * skid;
       }
       velocity.x = Math.min(maxSpeed, Math.max(-maxSpeed, velocity.x));
-
-      if (isHittingWall(sign(velocity.x))) {
-        velocity.x = 0;
-      }
     } else {
       if (Constants.Player.DECELERATION >= Math.abs(velocity.x)) {
         velocity.x = 0;
       } else {
-        velocity.x -= sign(velocity.x) * Constants.Player.DECELERATION;
+        velocity.x -= Util.sign(velocity.x) * Constants.Player.DECELERATION;
       }
     }
 
-    if (isGrounded()) {
+    if (isHittingWall(Util.sign(velocity.x))) {
+      velocity.x = 0;
+    }
+
+    if (jumping == true) {
+      if (!grounded && Input.getJumping() && Time.frame - lastJump <= Constants.Player.JUMP_MAX_DURATION) {
+        jump();
+      } else {
+        jumping = false;
+      }
+     }
+
+    if (grounded) {
       if (Input.getJumping()) {
-        velocity.y = -(Constants.Player.JUMP_VELOCITY + Constants.Player.JUMP_X_INFLUENCE * (int)(Math.abs(velocity.x) / 25));
+        jumping = true;
+        lastJump = Time.frame;
+        jump();
       } else {
         velocity.y = 0;
       }
@@ -65,10 +88,8 @@ class Player extends Entity {
     new Draw().rect(position.x, position.y, size.x, size.y);
   }
 
-  private int sign(float x) {
-    if (x == 0) return 0;
-    else if (x > 0) return 1;
-    return -1;
+  private void jump() {
+    velocity.y = -(Constants.Player.JUMP_VELOCITY + Constants.Player.JUMP_X_INFLUENCE * (int)(Math.abs(velocity.x) / 25));
   }
 }
 
