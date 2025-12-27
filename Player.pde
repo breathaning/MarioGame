@@ -14,7 +14,8 @@ class Player extends Entity {
   }
   
   public void update() {
-    boolean grounded = isGrounded();
+    boolean hittingFloor = isHittingFloor();
+    boolean hittingCeiling = isHittingCeiling();
 
     if (jumping) {
       gravity = Constants.Player.JUMP_GRAVITY;
@@ -35,7 +36,7 @@ class Player extends Entity {
         acceleration = Constants.Player.WALK_ACCELERATION;
         skid = Constants.Player.WALK_SKID;
       }
-      if (!grounded) {
+      if (!hittingFloor) {
         acceleration = Constants.Player.AIR_ACCELERATION;
         skid = Constants.Player.AIR_SKID;
       }
@@ -58,7 +59,7 @@ class Player extends Entity {
     }
 
     if (jumping == true) {
-      if (!grounded && Time.frame - lastJump <= Constants.Player.JUMP_CANCEL_WINDOW) {
+      if (!hittingCeiling && !hittingFloor && Time.frame - lastJump <= Constants.Player.JUMP_MAX_DURATION) {
         if (Input.getJumping()) {
           jumping = true;
         } else {
@@ -71,7 +72,7 @@ class Player extends Entity {
       }
      }
 
-    if (grounded) {
+    if (hittingFloor) {
       if (Input.getJumping()) {
         jumping = true;
         lastJump = Time.frame;
@@ -79,6 +80,10 @@ class Player extends Entity {
       } else {
         velocity.y = 0;
       }
+    }
+
+    if (hittingCeiling) {
+      velocity.y = Constants.Player.CEILING_BUMP_SPEED;
     }
     
     if (velocity.y > Constants.Player.MAX_FALL_SPEED) {

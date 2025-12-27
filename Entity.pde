@@ -43,10 +43,19 @@ static class Entity {
     return false;
   }
 
-  public boolean isGrounded() {
+  public boolean isHittingCeiling() {
     ArrayList<Entity> bounding = getBounding();
     for (Entity other : bounding) {
-      if (getAbsoluteXSeperation(other) == 0 || getYSeperation(other) > 0) continue;
+      if (this.position.y - other.position.y < 0 || getAbsoluteXSeperation(other) == 0 || getYSeperation(other) > 0) continue;
+      return true;
+    }
+    return false;
+  }
+
+  public boolean isHittingFloor() {
+    ArrayList<Entity> bounding = getBounding();
+    for (Entity other : bounding) {
+      if (this.position.y - other.position.y > 0 || getAbsoluteXSeperation(other) == 0 || getYSeperation(other) > 0) continue;
       return true;
     }
     return false;

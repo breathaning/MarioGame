@@ -1,11 +1,9 @@
 class Block extends Entity {
-  private String type;
   private PImage icon;
 
-  public Block(String type, PVector position) {
+  public Block(String type) {
     super();
-    this.type = type;
-    this.position = position;
+    this.position = new PVector();
     this.size = Constants.BLOCK_SIZE;
     this.canCollide = true;
 

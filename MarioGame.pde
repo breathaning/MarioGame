@@ -13,15 +13,17 @@ void setup() {
   rectMode(CENTER);
 
   mario = new Player();
-  for (int column = 0; column < 50; column++) {
-    int row = 14;
-    new Block("ground", new PVector(column * Constants.BLOCK_SIZE.x, row * Constants.BLOCK_SIZE.y));
-    new Block("ground", new PVector(column * Constants.BLOCK_SIZE.x, (row + 1) * Constants.BLOCK_SIZE.y));
-  }
-  new Block("brick", new PVector(30 * Constants.BLOCK_SIZE.x, 13 * Constants.BLOCK_SIZE.y));
-  new Block("brick", new PVector(30 * Constants.BLOCK_SIZE.x, 12 * Constants.BLOCK_SIZE.y));
-  new Block("brick", new PVector(30 * Constants.BLOCK_SIZE.x, 11 * Constants.BLOCK_SIZE.y));
-  new Block("brick", new PVector(30 * Constants.BLOCK_SIZE.x, 10 * Constants.BLOCK_SIZE.y));
+  new LevelBuilder()  
+    .rect("ground", 0, 13, 69, 2)
+    .block("brick", 16, 9)
+    .block("brick", 20, 9)
+    .block("brick", 21, 9)
+    .block("brick", 22, 9)
+    .block("brick", 23, 9)
+    .block("brick", 24, 9)
+    .block("brick", 22, 5)
+    .rect("ground", 71, 13, 15, 2)
+    .rect("ground", 89, 13, 58, 2);
 }
 
 void draw() {
