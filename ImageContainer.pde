@@ -1,3 +1,4 @@
 static class ImageContainer {
-    public static PImage GROUND_TILE;
+    public static PImage GROUND_BLOCK;
+    public static PImage BRICK_BLOCK;
 }
