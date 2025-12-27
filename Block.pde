@@ -11,6 +11,10 @@ class Block extends Entity {
       icon = ImageContainer.GROUND_BLOCK;
     } else if (type == "brick") {
       icon = ImageContainer.BRICK_BLOCK;
+    } else if (type == "mystery") {
+      icon = ImageContainer.MYSTERY_BLOCK;
+    } else if (type == "hard") {
+      icon = ImageContainer.HARD_BLOCK;
     }
   }
   
