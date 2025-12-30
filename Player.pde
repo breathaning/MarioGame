@@ -66,7 +66,7 @@ class Player extends Entity {
       }
       if (!hittingFloor) {
         acceleration = Constants.Player.AIR_ACCELERATION;
-        skid = acceleration;
+        skid = Constants.Player.AIR_SKID;
       }
       if (Util.sign(directionX) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_THRESHOLD) {
         velocity.x += Util.sign(directionX) * acceleration;

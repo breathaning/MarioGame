@@ -20,9 +20,10 @@ static class Constants {
     public static final float RUN_ACCELERATION = 6;
     public static final float RUN_SKID = 8;
     
-    public static final float AIR_ACCELERATION = 2;
+    public static final float AIR_ACCELERATION = 3;
+    public static final float AIR_SKID = 1.5;
     
-    public static final float DECELERATION = 4;
+    public static final float DECELERATION = 5;
     public static final float SKID_THRESHOLD = 100;
     public static final float SKID_ANIMATION_THRESHOLD = 10;
 
