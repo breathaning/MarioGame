@@ -1,7 +1,22 @@
 class Player extends Entity {
-  boolean jumping;
-  float lastJump;
-  float gravity;
+  private boolean jumping;
+  private float lastJump;
+  private boolean jumpDebounce;
+  private float gravity;
+
+  private Animation smallIdleAnimation = new Animation(new PImage[] { Images.SmallMario.IDLE });
+  private Animation smallJumpAnimation = new Animation(new PImage[] { Images.SmallMario.JUMP });
+  private Animation smallWalkAnimation = new Animation(new PImage[] { Images.SmallMario.WALK0, Images.SmallMario.WALK1, Images.SmallMario.WALK2 });
+  private Animation smallSkidAnimation = new Animation(new PImage[] { Images.SmallMario.SKID });
+  private Animation smallDeathAnimation = new Animation(new PImage[] { Images.SmallMario.DEATH });
+
+  private Animation bigIdleAnimation = new Animation(new PImage[] { Images.BigMario.IDLE });
+  private Animation bigJumpAnimation = new Animation(new PImage[] { Images.BigMario.JUMP });
+  private Animation bigWalkAnimation = new Animation(new PImage[] { Images.BigMario.WALK0, Images.BigMario.WALK1, Images.BigMario.WALK2 });
+  private Animation bigSkidAnimation = new Animation(new PImage[] { Images.BigMario.SKID });
+
+  private boolean animationFlip = false;
+
 
   public Player() {
     super();
@@ -10,10 +25,23 @@ class Player extends Entity {
     this.canCollide = true;
     this.keepOnScreen = true;
     this.jumping = false;
+    this.jumpDebounce = false;
     this.gravity = Constants.Player.GRAVITY;
+    this.currentAnimation = smallIdleAnimation;
   }
   
   public void update() {
+    movement();
+    animation();
+    super.update();
+  }
+  
+  public void show() {
+    int flip = animationFlip ? -1 : 1;
+    new Draw().image(getAnimationFrame(), position.x, position.y, size.y * flip, size.y);
+  }
+
+  private void movement() {
     boolean hittingFloor = isHittingFloor();
     boolean hittingCeiling = isHittingCeiling();
 
@@ -63,24 +91,29 @@ class Player extends Entity {
         if (Input.getJumping()) {
           jumping = true;
         } else {
-          // jump cancelled
           jumping = false;
-          velocity.y *= Constants.Player.JUMP_CANCEL_SCALAR;
+          cancelJump();
         }
       } else {
         jumping = false;
       }
      }
 
+    if (!Input.getJumping()) {
+      jumpDebounce = false;
+    }
+
     if (hittingFloor) {
-      if (Input.getJumping()) {
+      if (!jumpDebounce && Input.getJumping()) {
         jumping = true;
         lastJump = Time.frame;
+        jumpDebounce = true;
         jump();
       } else {
         velocity.y = 0;
       }
     }
+
 
     if (hittingCeiling) {
       velocity.y = Constants.Player.CEILING_BUMP_SPEED;
@@ -89,18 +122,39 @@ class Player extends Entity {
     if (velocity.y > Constants.Player.MAX_FALL_SPEED) {
       velocity.y = Constants.Player.MAX_FALL_SPEED;
     }
-
-    super.update();
-  }
-  
-  public void show() {
-    noStroke();
-    fill(255, 0, 0);
-    new Draw().rect(position.x, position.y, size.x, size.y);
   }
 
   private void jump() {
     velocity.y = -(Constants.Player.JUMP_VELOCITY + Constants.Player.JUMP_X_INFLUENCE * (int)(Math.abs(velocity.x) / 25));
+  }
+
+  private void cancelJump() {
+    velocity.y *= Constants.Player.JUMP_CANCEL_SCALAR;
+  }
+
+  private void animation() {
+    boolean hittingFloor = isHittingFloor();
+
+    if (hittingFloor) {
+      if (velocity.x == 0) {
+        setAnimation(smallIdleAnimation);
+      } else {
+        if (Input.getX() == 0 || Util.sign(Input.getX()) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_ANIMATION_THRESHOLD) {
+          setAnimation(smallWalkAnimation);
+        } else {
+          setAnimation(smallSkidAnimation);
+        }
+      }
+      animationFlip = Input.getX() == 0 ? animationFlip : (Input.getX() < 0);
+    } else {
+      setAnimation(smallJumpAnimation);
+    }
+
+    if (currentAnimation == smallWalkAnimation) {
+      stepAnimation(Math.abs(velocity.x) / 400.0);
+    } else {
+      stepAnimation(1);
+    }
   }
 }
 

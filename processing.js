@@ -6653,7 +6653,7 @@
       if (canvasData === undef) {
         canvasData = {};
         canvasData.canvas = document.createElement("canvas");
-        canvasData.context = canvasData.canvas.getContext("2d")
+        canvasData.context = canvasData.canvas.getContext("2d", { willReadFrequently: true })
       }
       canvasDataCache.push(canvasData);
       var canvas = canvasData.canvas,
@@ -10158,6 +10158,7 @@
         if (processingSources === null) processingSources = canvas[i].getAttribute("datasrc")
       }
       if (processingSources) {
+        canvas[i].getContext("2d");
         filenames = processingSources.split(/\s+/g);
         for (var j = 0; j < filenames.length;) if (filenames[j]) j++;
         else filenames.splice(j, 1);

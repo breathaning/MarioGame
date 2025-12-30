@@ -75,6 +75,10 @@ private class Text {
 
 private class Image {
   public void draw(PImage img, float x, float y, float w, float h) {
-    image(img, Util.displayX(x), Util.displayY(y), Util.displayX(w), Util.displayY(h));
+    pushMatrix();
+    scale(Util.sign(w), Util.sign(h));
+    translate(Util.displayX(x) * Util.sign(w), Util.displayY(y) * Util.sign(h));
+    image(img, 0, 0, Util.displayX(w), Util.displayY(h));
+    popMatrix();
   }
 }

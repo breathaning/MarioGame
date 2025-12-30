@@ -20,7 +20,3 @@ footer {
 	font-style: italic;
 	font-size: 90%;
 }
-
-canvas {
-    image-rendering: nearest-neighbor; /* Or "crisp-edges", "nearest-neighbor" */
-  }

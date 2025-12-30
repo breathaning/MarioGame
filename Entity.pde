@@ -6,11 +6,15 @@ static class Entity {
   }
 
   protected String name;
+
   protected PVector position;
   protected PVector velocity;
   protected PVector size;
+
   protected boolean canCollide;
   protected boolean keepOnScreen;
+
+  protected Animation currentAnimation;
 
   public Entity() {
     this.name = "";
@@ -187,5 +191,27 @@ static class Entity {
 
   public float getAbsoluteYSeperation(Entity other) {
     return Math.abs(this.position.y - other.position.y) - ((other.size.y + this.size.y) / 2);
+  }
+
+  public void setAnimation(Animation animation) {
+    if (currentAnimation != null && currentAnimation != animation) {
+      animation.start();
+    }
+    currentAnimation = animation;
+  }
+
+  public void stepAnimation(float progress) {
+    if (currentAnimation == null) return;
+    currentAnimation.step(progress);
+  }
+
+  public void resetAnimation() {
+    if (currentAnimation == null) return;
+    currentAnimation.start();
+  }
+
+  public PImage getAnimationFrame() {
+    if (currentAnimation == null) return null;
+    return currentAnimation.get();
   }
 }
