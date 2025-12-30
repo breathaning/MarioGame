@@ -21,7 +21,6 @@ static class Constants {
     public static final float RUN_SKID = 8;
     
     public static final float AIR_ACCELERATION = 3;
-    public static final float AIR_SKID = 1.5;
     
     public static final float DECELERATION = 3;
     public static final float SKID_THRESHOLD = 100;
