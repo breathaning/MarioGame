@@ -17,7 +17,9 @@ class Block extends Entity {
   }
   
   public void show() {
-    new Draw().image(getAnimationFrame(), position.x, position.y, size.x, size.y);
+    if (Util.isVisible(position.x, position.y, size.x, size.y)) {
+      new Draw().image(getAnimationFrame(), position.x, position.y, size.x, size.y);
+    }
     stepAnimation(6.7 / Constants.SIMULATION_RATE);
   }
   

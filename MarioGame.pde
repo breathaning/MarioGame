@@ -67,7 +67,14 @@ void setup() {
     .rampUp("hard", 134, 12, 4, 4)
     .rampDown("hard", 140, 12, 4, 4)
     .rampUp("hard", 148, 12, 4, 4)
-    .rect("hard", 152, 9, 1, 4);
+    .rect("hard", 152, 9, 1, 4)
+    .rect("ground", 155, 13, 55, 2)
+    .rampDown("hard", 155, 12, 4, 4)
+    .rect("brick", 168, 9, 2, 1)
+    .block("mystery", 170, 9)
+    .block("brick", 171, 9)
+    .rampUp("hard", 181, 12, 8, 8)
+    .rect("hard", 189, 5, 1, 8);
 }
 
 void draw() {

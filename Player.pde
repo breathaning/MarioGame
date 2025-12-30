@@ -3,6 +3,7 @@ class Player extends Entity {
   private float lastJump;
   private boolean jumpDebounce;
   private float gravity;
+  private boolean dead = false;
 
   private Animation smallIdleAnimation = new Animation(new PImage[] { Images.SmallMario.IDLE });
   private Animation smallJumpAnimation = new Animation(new PImage[] { Images.SmallMario.JUMP });
@@ -31,7 +32,15 @@ class Player extends Entity {
   }
 
   public void update() {
-    movement();
+    if (!dead) {
+      movement();
+    }
+    if (position.y > 300) {
+      dead = true;
+      velocity.x = 0;
+      velocity.y = -400;
+      gravity = Constants.Player.GRAVITY;
+    }
     animation();
     super.update();
   }
@@ -138,22 +147,25 @@ class Player extends Entity {
       stepAnimation(1);
     }
 
-    boolean hittingFloor = isHittingFloor();
-    if (hittingFloor) {
-      if (velocity.x == 0) {
-        setAnimation(smallIdleAnimation);
-      } else {
-        if (Input.getX() == 0 || Util.sign(Input.getX()) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_ANIMATION_THRESHOLD) {
-          setAnimation(smallWalkAnimation);
-        } else {
-          setAnimation(smallSkidAnimation);
-        }
-      }
-      animationFlip = Input.getX() == 0 ? animationFlip : (Input.getX() < 0);
+    if (dead) {
+      setAnimation(smallDeathAnimation);
     } else {
-      setAnimation(smallJumpAnimation);
+      boolean hittingFloor = isHittingFloor();
+      if (hittingFloor) {
+        if (velocity.x == 0) {
+          setAnimation(smallIdleAnimation);
+        } else {
+          if (Input.getX() == 0 || Util.sign(Input.getX()) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_ANIMATION_THRESHOLD) {
+            setAnimation(smallWalkAnimation);
+          } else {
+            setAnimation(smallSkidAnimation);
+          }
+        }
+        animationFlip = Input.getX() == 0 ? animationFlip : (Input.getX() < 0);
+      } else {
+        setAnimation(smallJumpAnimation);
+      }
     }
   }
 }
-
 
