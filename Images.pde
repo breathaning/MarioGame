@@ -2,6 +2,9 @@ static class Images {
     public static PImage GROUND_BLOCK;
     public static PImage BRICK_BLOCK;
     public static PImage MYSTERY_BLOCK;
+    public static PImage MYSTERY_BLOCK0;
+    public static PImage MYSTERY_BLOCK1;
+    public static PImage MYSTERY_BLOCK2;
     public static PImage HARD_BLOCK;
 
     public static class SmallMario {

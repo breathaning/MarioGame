@@ -1,6 +1,4 @@
 class Block extends Entity {
-  private PImage icon;
-
   public Block(String type) {
     super();
     this.position = new PVector();
@@ -8,18 +6,19 @@ class Block extends Entity {
     this.canCollide = true;
 
     if (type == "ground") {
-      icon = Images.GROUND_BLOCK;
+      setAnimation(new Animation(new PImage[] { Images.GROUND_BLOCK }));
     } else if (type == "brick") {
-      icon = Images.BRICK_BLOCK;
+      setAnimation(new Animation(new PImage[] { Images.BRICK_BLOCK }));
     } else if (type == "mystery") {
-      icon = Images.MYSTERY_BLOCK;
+      setAnimation(new Animation(new PImage[] { Images.MYSTERY_BLOCK0, Images.MYSTERY_BLOCK1, Images.MYSTERY_BLOCK2, Images.MYSTERY_BLOCK1, Images.MYSTERY_BLOCK0 }));
     } else if (type == "hard") {
-      icon = Images.HARD_BLOCK;
+      setAnimation(new Animation(new PImage[] { Images.HARD_BLOCK }));
     }
   }
   
   public void show() {
-    new Draw().image(icon, position.x, position.y, size.x, size.y);
+    new Draw().image(getAnimationFrame(), position.x, position.y, size.x, size.y);
+    stepAnimation(6.7 / Constants.SIMULATION_RATE);
   }
   
   public void gridToPosition(int column, int row) {

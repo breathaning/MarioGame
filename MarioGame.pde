@@ -7,7 +7,10 @@ void settings() {
 
   Images.GROUND_BLOCK = loadImage("Ground Block.png");
   Images.BRICK_BLOCK = loadImage("Brick Block.png");
-  Images.MYSTERY_BLOCK = loadImage("Mystery Block.png");
+  Images.MYSTERY_BLOCK0 = loadImage("Mystery Block0.png");
+  Images.MYSTERY_BLOCK1 = loadImage("Mystery Block1.png");
+  Images.MYSTERY_BLOCK2 = loadImage("Mystery Block2.png");
+  Images.MYSTERY_BLOCK = Images.MYSTERY_BLOCK0;
   Images.HARD_BLOCK = loadImage("Hard Block.png");
 
   Images.SmallMario.IDLE = loadImage("Small Mario Idle.png");

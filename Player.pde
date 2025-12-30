@@ -132,8 +132,13 @@ class Player extends Entity {
   }
 
   private void animation() {
-    boolean hittingFloor = isHittingFloor();
+    if (currentAnimation == smallWalkAnimation) {
+      stepAnimation(Math.abs(velocity.x) / 400.0);
+    } else {
+      stepAnimation(1);
+    }
 
+    boolean hittingFloor = isHittingFloor();
     if (hittingFloor) {
       if (velocity.x == 0) {
         setAnimation(smallIdleAnimation);
@@ -147,12 +152,6 @@ class Player extends Entity {
       animationFlip = Input.getX() == 0 ? animationFlip : (Input.getX() < 0);
     } else {
       setAnimation(smallJumpAnimation);
-    }
-
-    if (currentAnimation == smallWalkAnimation) {
-      stepAnimation(Math.abs(velocity.x) / 400.0);
-    } else {
-      stepAnimation(1);
     }
   }
 }
