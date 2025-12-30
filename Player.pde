@@ -1,7 +1,6 @@
 class Player extends Entity {
   private boolean jumping;
   private float lastJump;
-  private boolean jumpDebounce;
   private float gravity;
   private boolean dead = false;
 
@@ -18,7 +17,6 @@ class Player extends Entity {
 
   private boolean animationFlip = false;
 
-
   public Player() {
     super();
     this.size = new PVector(12, 16);
@@ -26,7 +24,6 @@ class Player extends Entity {
     this.canCollide = true;
     this.keepOnScreen = true;
     this.jumping = false;
-    this.jumpDebounce = false;
     this.gravity = Constants.Player.GRAVITY;
     this.currentAnimation = smallIdleAnimation;
   }
@@ -109,17 +106,12 @@ class Player extends Entity {
     }
 
     if (hittingFloor) {
-      if (!jumpDebounce && Input.getJumping()) {
+      if (Input.getJumping()) {
         jumping = true;
         lastJump = Time.frame;
-        jumpDebounce = true;
         jump();
       } else {
         velocity.y = 0;
-      }
-
-      if (!Input.getJumping()) {
-        jumpDebounce = false;
       }
     }
 

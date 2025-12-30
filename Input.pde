@@ -29,7 +29,7 @@ static class Input {
   }
 
   public static boolean getJumping() {
-    return isKeyActive('z');
+    return isKeyActive('z') || isKeyActive('w');
   }
 
   public static PVector getDirection() {
