@@ -29,13 +29,13 @@ class Player extends Entity {
     this.gravity = Constants.Player.GRAVITY;
     this.currentAnimation = smallIdleAnimation;
   }
-  
+
   public void update() {
     movement();
     animation();
     super.update();
   }
-  
+
   public void show() {
     int flip = animationFlip ? -1 : 1;
     new Draw().image(getAnimationFrame(), position.x, position.y, size.y * flip, size.y);
@@ -86,7 +86,7 @@ class Player extends Entity {
       velocity.x = 0;
     }
 
-    if (jumping == true) {
+    if (jumping) {
       if (!hittingCeiling && !hittingFloor && Time.frame - lastJump <= Constants.Player.JUMP_MAX_DURATION) {
         if (Input.getJumping()) {
           jumping = true;
@@ -97,10 +97,6 @@ class Player extends Entity {
       } else {
         jumping = false;
       }
-     }
-
-    if (!Input.getJumping()) {
-      jumpDebounce = false;
     }
 
     if (hittingFloor) {
@@ -112,13 +108,16 @@ class Player extends Entity {
       } else {
         velocity.y = 0;
       }
-    }
 
+      if (!Input.getJumping()) {
+        jumpDebounce = false;
+      }
+    }
 
     if (hittingCeiling) {
       velocity.y = Constants.Player.CEILING_BUMP_SPEED;
     }
-    
+
     if (velocity.y > Constants.Player.MAX_FALL_SPEED) {
       velocity.y = Constants.Player.MAX_FALL_SPEED;
     }
@@ -157,6 +156,5 @@ class Player extends Entity {
     }
   }
 }
-
 
 
