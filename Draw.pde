@@ -6,6 +6,7 @@ public class Draw {
     ArrayList<Integer> drawLayers = new ArrayList();
     ArrayList<ArrayList<Entity>> drawEntities = new ArrayList();
     for (Entity entity : Entity.getEntities()) {
+      if (entity.cull()) continue;
       int drawLayer = entity.getDrawLayer();
       if (!drawLayers.contains(drawLayer)) {
         int insertIndex = drawLayers.size();
@@ -24,7 +25,6 @@ public class Draw {
     background(92, 148, 253);
     for (ArrayList<Entity> group : drawEntities) {
       for (Entity entity : group) {
-        if (entity.cull()) continue;
         pushMatrix();
         entity.show();
         popMatrix();
