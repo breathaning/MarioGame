@@ -16,12 +16,17 @@ class Block extends Entity {
       setAnimation(new Animation(new PImage[] { Images.HARD_BLOCK }));
     }
   }
+
+  public void update() {
+    stepAnimation(6.7 / Constants.SIMULATION_RATE);
+  }
+
+  public boolean cull() {
+    return !Util.isVisible(position.x, position.y, size.x, size.y);
+  }
   
   public void show() {
-    if (Util.isVisible(position.x, position.y, size.x, size.y)) {
-      new Draw().image(getAnimationFrame(), position.x, position.y, size.x, size.y);
-    }
-    stepAnimation(6.7 / Constants.SIMULATION_RATE);
+    new Draw().image(getAnimationFrame(), position.x, position.y, size.x, size.y);
   }
   
   public void gridToPosition(int column, int row) {

@@ -33,6 +33,10 @@ static class Entity {
     move(PVector.div(velocity, Constants.SIMULATION_RATE));
   }
 
+  public boolean cull() {
+    return false;
+  }
+
   public void show() {
   }
 

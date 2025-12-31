@@ -24,6 +24,7 @@ public class Draw {
     background(92, 148, 253);
     for (ArrayList<Entity> group : drawEntities) {
       for (Entity entity : group) {
+        if (entity.cull()) continue;
         pushMatrix();
         entity.show();
         popMatrix();
