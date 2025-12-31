@@ -1,8 +1,98 @@
+private static class Chunk {
+    private final ArrayList<Entity> entities = new ArrayList();
+
+    public void addEntity(Entity entity) {
+      if (entities.contains(entity)) return;
+      entities.add(entity);
+    }
+
+    public void removeEntity(Entity entity) {
+      entities.remove(entity);
+    }
+
+    public Entity[] getEntities() {
+      return entities.toArray(new Entity[0]);
+    }
+
+    public int getEntityCount() {
+      return entities.size();
+    }
+
+    public boolean containsEntity(Entity entity) {
+      return entities.contains(entity);
+    }
+  }
+
 static class Entity {
   private static final ArrayList<Entity> entities = new ArrayList();
 
   public static ArrayList<Entity> getEntities() {
     return entities;
+  }
+
+  private static final ArrayList<Chunk> boundChunks = new ArrayList();
+  private static final ArrayList<String> boundChunkIds = new ArrayList();
+  private static final ArrayList<Entity> uncachedEntities = new ArrayList();
+  private static final PVector chunkSize = Constants.NATIVE_RESOLUTION;
+
+  public static void flagEntityUncached(Entity entity) {
+    if (uncachedEntities.contains(entity)) return;
+    uncachedEntities.add(entity);
+  }
+
+  public static void cacheEntities() {
+    if (uncachedEntities.size() == 0) return;
+
+    for (Entity entity : uncachedEntities) {
+      for (Chunk chunk : boundChunks) {
+        chunk.removeEntity(entity);
+      }
+      cacheEntityBoundChunk(entity);
+    }
+    uncachedEntities.clear();
+
+    for (int i = 0; i < boundChunks.size(); i++) {
+      if (boundChunks.get(i).getEntityCount() != 0) continue;
+      boundChunks.remove(i);
+      boundChunkIds.remove(i);
+      i--;
+    }
+  }
+
+  private static void cacheEntityBoundChunk(Entity entity) {
+    int chunkSpanX = (int)Math.floor(entity.size.x / chunkSize.x + 2);
+    int chunkSpanY = (int)Math.floor(entity.size.y / chunkSize.y + 2);
+    float chunkStartX = (float)(chunkSize.x * Math.floor(entity.position.x / chunkSize.x) + chunkSize.x / 2 * (1 - chunkSpanX));
+    float chunkStartY = (float)(chunkSize.y * Math.floor(entity.position.y / chunkSize.y) + chunkSize.y / 2 * (1 - chunkSpanY));
+    for (int i = 0; i < chunkSpanX; i++) {
+      float chunkPositionX = chunkStartX + i * chunkSize.x;
+      if (!Util.isBounding(entity.position.x, 0, entity.size.x, 0, chunkPositionX, 0, chunkSize.x, 0)) continue;
+      for (int j = 0; j < chunkSpanY; j++) {
+        float chunkPositionY = chunkStartY + j * chunkSize.y;
+        if (!Util.isBounding(0, entity.position.y, 0, entity.size.y, 0, chunkPositionY, 0, chunkSize.y)) continue;
+        String chunkId = (String)(chunkPositionX + "," + chunkPositionY);
+        if (!boundChunkIds.contains(chunkId)) {
+          boundChunkIds.add(chunkId);
+          boundChunks.add(new Chunk());
+        }
+        boundChunks.get(boundChunkIds.indexOf(chunkId)).addEntity(entity);
+      }
+    }
+  }
+
+  private static Entity[] getOtherEntitiesInBoundingChunks(Entity entity) {
+    cacheEntityBoundChunk(entity);
+    ArrayList<Entity> otherEntities = new ArrayList();
+    for (Chunk chunk : boundChunks) {
+      if (!chunk.containsEntity(entity)) continue;
+      for (Entity otherEntity : chunk.getEntities()) {
+        if (otherEntity == entity) continue;
+        if (otherEntities.contains(otherEntity)) continue;
+        otherEntities.add(otherEntity);
+      }
+    }
+    entity.otherEntitiesInBoundingChunks = otherEntities.toArray(new Entity[0]);
+    return entity.otherEntitiesInBoundingChunks;
   }
 
   protected String name;
@@ -18,6 +108,8 @@ static class Entity {
 
   protected int drawLayer;
 
+  protected Entity[] otherEntitiesInBoundingChunks;
+
   public Entity() {
     this.name = "";
     this.position = new PVector(0, 0);
@@ -26,7 +118,9 @@ static class Entity {
     this.canCollide = false;
     this.keepOnScreen = false;
     this.drawLayer = 0;
+    this.otherEntitiesInBoundingChunks = new Entity[0];
     Entity.entities.add(this);
+    flagEntityUncached(this);
   }
 
   public void update() {
@@ -50,7 +144,7 @@ static class Entity {
 
   public boolean isHittingWall(int direction) {
     if (direction == 0) return false;
-    ArrayList<Entity> bounding = getBounding();
+    Entity[] bounding = getBounding(otherEntitiesInBoundingChunks);
     for (Entity other : bounding) {
       if ((this.position.x - other.position.x) * direction > 0 || getAbsoluteYSeperation(other) >= 0) continue;
       return true;
@@ -59,7 +153,7 @@ static class Entity {
   }
 
   public boolean isHittingCeiling() {
-    ArrayList<Entity> bounding = getBounding();
+    Entity[] bounding = getBounding(otherEntitiesInBoundingChunks);
     for (Entity other : bounding) {
       if (this.position.y - other.position.y < 0 || getAbsoluteXSeperation(other) == 0 || getYSeperation(other) > 0) continue;
       return true;
@@ -68,7 +162,7 @@ static class Entity {
   }
 
   public boolean isHittingFloor() {
-    ArrayList<Entity> bounding = getBounding();
+    Entity[] bounding = getBounding(otherEntitiesInBoundingChunks);
     for (Entity other : bounding) {
       if (this.position.y - other.position.y > 0 || getAbsoluteXSeperation(other) == 0 || getYSeperation(other) > 0) continue;
       return true;
@@ -78,36 +172,50 @@ static class Entity {
 
   public boolean isBounding(Entity other) {
     if (!other.canCollide) return false;
-    float distX = this.position.x - other.position.x;
-    float distY = this.position.y - other.position.y;
-    return Math.abs(distX) <= (this.size.x + other.size.y) / 2 && Math.abs(distY) <= (this.size.y + other.size.y) / 2;
+    return Util.isBounding(
+      this.position.x,
+      this.position.y,
+      this.size.x,
+      this.size.y,
+      other.position.x,
+      other.position.y,
+      other.size.x,
+      other.size.y
+      );
   }
 
-  public ArrayList<Entity> getBounding() {
+  public Entity[] getBounding(Entity[] group) {
     ArrayList<Entity> bounding = new ArrayList();
-    for (Entity other : Entity.entities) {
+    for (Entity other : group) {
       if (other == this) continue;
       if (!isBounding(other)) continue;
       bounding.add(other);
     }
-    return bounding;
+    return bounding.toArray(new Entity[0]);
   }
 
   public boolean isTouching(Entity other) {
     if (!other.canCollide) return false;
-    float distX = this.position.x - other.position.x;
-    float distY = this.position.y - other.position.y;
-    return Math.abs(distX) < (this.size.x + other.size.y) / 2 && Math.abs(distY) < (this.size.y + other.size.y) / 2;
+    return Util.isTouching(
+      this.position.x,
+      this.position.y,
+      this.size.x,
+      this.size.y,
+      other.position.x,
+      other.position.y,
+      other.size.x,
+      other.size.y
+      );
   }
 
-  public ArrayList<Entity> getTouching() {
+  public Entity[] getTouching(Entity[] group) {
     ArrayList<Entity> touching = new ArrayList();
-    for (Entity other : Entity.entities) {
+    for (Entity other : group) {
       if (other == this) continue;
       if (!isTouching(other)) continue;
       touching.add(other);
     }
-    return touching;
+    return touching.toArray(new Entity[0]);
   }
 
   public Entity getFirstTouching() {
@@ -120,15 +228,17 @@ static class Entity {
   }
 
   public void move(PVector offset) {
+    if (offset.x == 0 && offset.y == 0) return;
+    cacheEntities();
+    flagEntityUncached(this);
     int steps = (int)Math.ceil(2 * offset.mag() / size.mag());
     if (steps == 0) return;
     for (int i = 0; i < steps; i++) {
       boolean xTouched = false;
       boolean yTouched = false;
-
       if (offset.x != 0) {
         position.x += offset.x / steps;
-        if (keepOnScreen) {  
+        if (keepOnScreen) {
           if (position.x < Scene.getPosition().x + size.x / 2) {
             position.x = Scene.getPosition().x + size.x / 2;
           }
@@ -136,13 +246,13 @@ static class Entity {
             position.x = Scene.getPosition().x + Scene.getSize().x - size.x / 2;
           }
         }
-        ArrayList<Entity> xTouching = getTouching();
-        if (xTouching.size() > 0) {
+        Entity[] xTouching = getTouching(getOtherEntitiesInBoundingChunks(this));
+        if (xTouching.length > 0) {
           xTouched = true;
-          Entity closest = xTouching.get(0);
+          Entity closest = xTouching[0];
           float closestSeperation = Math.abs(getXSeperation(closest));
-          for (int j = 0; j < xTouching.size(); j++) {
-            Entity other = xTouching.get(j);
+          for (int j = 0; j < xTouching.length; j++) {
+            Entity other = xTouching[j];
             float separation = Math.abs(getXSeperation(other));
             if (separation > closestSeperation) continue;
             closest = other;
@@ -154,13 +264,13 @@ static class Entity {
 
       if (offset.y != 0) {
         position.y += offset.y / steps;
-        ArrayList<Entity> yTouching = getTouching();
-        if (yTouching.size() > 0) {
+        Entity[] yTouching = getTouching(getOtherEntitiesInBoundingChunks(this));
+        if (yTouching.length > 0) {
           yTouched = true;
-          Entity closest = yTouching.get(0);
+          Entity closest = yTouching[0];
           float closestSeperation = Math.abs(getYSeperation(closest));
-          for (int j = 0; j < yTouching.size(); j++) {
-            Entity other = yTouching.get(j);
+          for (int j = 0; j < yTouching.length; j++) {
+            Entity other = yTouching[j];
             float separation = Math.abs(getYSeperation(other));
             if (separation > closestSeperation) continue;
             closest = other;

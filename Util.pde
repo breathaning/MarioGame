@@ -26,4 +26,17 @@ static class Util {
   public static float displayY(float y) {
     return y * Constants.DISPLAY_RESOLUTION.y / Constants.NATIVE_RESOLUTION.y;
   }
+  
+  public static boolean isTouching(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
+    float distX = x1 - x2;
+    float distY = y1 - y2;
+    return Math.abs(distX) < (w1 + w2) / 2 && Math.abs(distY) < (h1 + h2) / 2;
+  }
+
+  public static boolean isBounding(float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
+    float distX = x1 - x2;
+    float distY = y1 - y2;
+    return Math.abs(distX) <= (w1 + w2) / 2 && Math.abs(distY) <= (h1 + h2) / 2;
+  }
+
 }
