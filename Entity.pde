@@ -15,7 +15,7 @@ static class Entity {
     uncachedEntities.add(entity);
   }
 
-  public static void cacheEntities() {
+  private static void cacheEntities() {
     if (uncachedEntities.size() == 0) return;
 
     for (Entity entity : uncachedEntities) {

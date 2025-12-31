@@ -1,6 +1,6 @@
 class Animation {
     private PImage[] animationFrames;
-    public float animationProgress;
+    private float animationProgress;
 
     public Animation(PImage[] animationFrames) {
         this.animationFrames = animationFrames;
