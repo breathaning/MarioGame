@@ -16,6 +16,8 @@ static class Entity {
 
   protected Animation currentAnimation;
 
+  protected int drawLayer;
+
   public Entity() {
     this.name = "";
     this.position = new PVector(0, 0);
@@ -23,6 +25,7 @@ static class Entity {
     this.size = new PVector(0, 0);
     this.canCollide = false;
     this.keepOnScreen = false;
+    this.drawLayer = 0;
     Entity.entities.add(this);
   }
 
@@ -35,6 +38,10 @@ static class Entity {
 
   public void destroy() {
     Entity.entities.remove(this);
+  }
+
+  public int getDrawLayer() {
+    return drawLayer;
   }
 
   public boolean isHittingWall(int direction) {

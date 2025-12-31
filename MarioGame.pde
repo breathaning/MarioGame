@@ -45,21 +45,13 @@ void draw() {
   for (Entity entity : Entity.getEntities()) {
     entity.update();
   }
-
-  Input.refresh();
-
   if (mario.position.x - Scene.getPosition().x > Scene.getSize().x / 2) {
     Scene.setX(mario.position.x - Scene.getSize().x / 2);
   }
-  pushMatrix();
-  translate(Util.displayX(-Scene.position.x), Util.displayY(-Scene.position.y));
-  background(92, 148, 253);
-  for (Entity entity : Entity.getEntities()) {
-    pushMatrix();
-    entity.show();
-    popMatrix();
-  }
-  popMatrix();
+
+  Input.refresh();
+
+  new Draw().scene();
 }
 
 void updateTime() {

@@ -2,7 +2,7 @@ class Player extends Entity {
   private boolean jumping;
   private float lastJump;
   private float gravity;
-  private boolean dead = false;
+  private boolean dead;
 
   private Animation smallIdleAnimation = new Animation(new PImage[] { Images.SmallMario.IDLE });
   private Animation smallJumpAnimation = new Animation(new PImage[] { Images.SmallMario.JUMP });
@@ -15,7 +15,7 @@ class Player extends Entity {
   private Animation bigWalkAnimation = new Animation(new PImage[] { Images.BigMario.WALK0, Images.BigMario.WALK1, Images.BigMario.WALK2 });
   private Animation bigSkidAnimation = new Animation(new PImage[] { Images.BigMario.SKID });
 
-  private boolean animationFlip = false;
+  private boolean animationFlip;
 
   public Player() {
     super();
@@ -25,7 +25,10 @@ class Player extends Entity {
     this.keepOnScreen = true;
     this.jumping = false;
     this.gravity = Constants.Player.GRAVITY;
+    this.dead = false;
+    this.animationFlip = false;
     this.currentAnimation = smallIdleAnimation;
+    this.drawLayer = 1;
   }
 
   public void update() {
@@ -51,9 +54,7 @@ class Player extends Entity {
     boolean hittingFloor = isHittingFloor();
     boolean hittingCeiling = isHittingCeiling();
 
-    if (jumping) {
-      gravity = Constants.Player.JUMP_GRAVITY;
-    } else if (!jumping && velocity.y > 0) {
+    if (!jumping && velocity.y > 0) {
       gravity = Constants.Player.GRAVITY;
     }
     velocity.y += gravity;
@@ -126,6 +127,7 @@ class Player extends Entity {
 
   private void jump() {
     velocity.y = -(Constants.Player.JUMP_VELOCITY + Constants.Player.JUMP_X_INFLUENCE * (int)(Math.abs(velocity.x) / 25));
+    gravity = Constants.Player.JUMP_GRAVITY;
   }
 
   private void cancelJump() {
@@ -134,7 +136,7 @@ class Player extends Entity {
 
   private void animation() {
     if (currentAnimation == smallWalkAnimation) {
-      stepAnimation(Math.abs(velocity.x) / 400.0);
+      stepAnimation(Math.abs(velocity.x) / 500.0 + 0.1);
     } else {
       stepAnimation(1);
     }
@@ -144,10 +146,10 @@ class Player extends Entity {
     } else {
       boolean hittingFloor = isHittingFloor();
       if (hittingFloor) {
-        if (velocity.x == 0) {
+        if (Input.getX() == 0) {
           setAnimation(smallIdleAnimation);
         } else {
-          if (Input.getX() == 0 || Util.sign(Input.getX()) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_ANIMATION_THRESHOLD) {
+          if (Util.sign(Input.getX()) == Util.sign(velocity.x) || Math.abs(velocity.x) < Constants.Player.SKID_ANIMATION_THRESHOLD) {
             setAnimation(smallWalkAnimation);
           } else {
             setAnimation(smallSkidAnimation);

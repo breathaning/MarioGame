@@ -4,6 +4,7 @@ class Block extends Entity {
     this.position = new PVector();
     this.size = Constants.BLOCK_SIZE;
     this.canCollide = true;
+    this.drawLayer = 0;
 
     if (type == "ground") {
       setAnimation(new Animation(new PImage[] { Images.GROUND_BLOCK }));
