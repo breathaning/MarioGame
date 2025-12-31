@@ -1,28 +1,3 @@
-private static class Chunk {
-    private final ArrayList<Entity> entities = new ArrayList();
-
-    public void addEntity(Entity entity) {
-      if (entities.contains(entity)) return;
-      entities.add(entity);
-    }
-
-    public void removeEntity(Entity entity) {
-      entities.remove(entity);
-    }
-
-    public Entity[] getEntities() {
-      return entities.toArray(new Entity[0]);
-    }
-
-    public int getEntityCount() {
-      return entities.size();
-    }
-
-    public boolean containsEntity(Entity entity) {
-      return entities.contains(entity);
-    }
-  }
-
 static class Entity {
   private static final ArrayList<Entity> entities = new ArrayList();
 
@@ -44,9 +19,6 @@ static class Entity {
     if (uncachedEntities.size() == 0) return;
 
     for (Entity entity : uncachedEntities) {
-      for (Chunk chunk : boundChunks) {
-        chunk.removeEntity(entity);
-      }
       cacheEntityBoundChunk(entity);
     }
     uncachedEntities.clear();
@@ -60,6 +32,9 @@ static class Entity {
   }
 
   private static void cacheEntityBoundChunk(Entity entity) {
+    for (Chunk chunk : boundChunks) {
+      chunk.removeEntity(entity);
+    }
     int chunkSpanX = (int)Math.floor(entity.size.x / chunkSize.x + 2);
     int chunkSpanY = (int)Math.floor(entity.size.y / chunkSize.y + 2);
     float chunkStartX = (float)(chunkSize.x * Math.floor(entity.position.x / chunkSize.x) + chunkSize.x / 2 * (1 - chunkSpanX));
@@ -334,5 +309,30 @@ static class Entity {
   public PImage getAnimationFrame() {
     if (currentAnimation == null) return null;
     return currentAnimation.get();
+  }
+}
+
+private static class Chunk {
+  private final ArrayList<Entity> entities = new ArrayList();
+
+  public void addEntity(Entity entity) {
+    if (entities.contains(entity)) return;
+    entities.add(entity);
+  }
+
+  public void removeEntity(Entity entity) {
+    entities.remove(entity);
+  }
+
+  public Entity[] getEntities() {
+    return entities.toArray(new Entity[0]);
+  }
+
+  public int getEntityCount() {
+    return entities.size();
+  }
+
+  public boolean containsEntity(Entity entity) {
+    return entities.contains(entity);
   }
 }

@@ -7,6 +7,7 @@ class LevelLoader {
     case "1-1":
       {
         loadWorld1_1();
+        break;
       }
 
     default:
@@ -63,3 +64,4 @@ class LevelLoader {
       .rect("hard", 189, 5, 1, 8);
   }
 }
+
