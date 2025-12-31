@@ -26,8 +26,8 @@ private static class Chunk {
 static class Entity {
   private static final ArrayList<Entity> entities = new ArrayList();
 
-  public static ArrayList<Entity> getEntities() {
-    return entities;
+  public static Entity[] getEntities() {
+    return entities.toArray(new Entity[0]);
   }
 
   private static final ArrayList<Chunk> boundChunks = new ArrayList();
